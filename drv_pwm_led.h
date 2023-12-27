@@ -78,7 +78,7 @@ typedef enum
  * Function Prototypes
  **************************************************************************** */
 void drv_pwm_led_init_timer(uint32_t frequency_hz);
-void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, float set_high_point_percent);
+void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, float duty_percent, float set_high_point_percent);
 
 
 
