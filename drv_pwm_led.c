@@ -53,6 +53,8 @@
  **************************************************************************** */
 int duty_timer_value;
 int set_high_point_timer_value;
+bool timer_is_busy[LEDC_TIMER_MAX] = {0};
+bool channel_is_busy[LEDC_CHANNEL_MAX] = {0};
 
 /* *****************************************************************************
  * Prototype of functions definitions
@@ -64,7 +66,7 @@ int set_high_point_timer_value;
 
 
 
-void ledc_init(drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_channel_t e_channel, float set_high_point_percent)
+void ledc_init(drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_timer_t e_timer, float set_high_point_percent)
 {
     set_high_point_timer_value = set_high_point_percent * pow(2, LEDC_DUTY_RES) / 100;
 
@@ -72,7 +74,7 @@ void ledc_init(drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_channel_t e_channel, flo
     ledc_channel_config_t ledc_channel = {
         .speed_mode     = LEDC_MODE,
         .channel        = e_channel,
-        .timer_sel      = LEDC_TIMER,
+        .timer_sel      = e_timer,
         .intr_type      = LEDC_INTR_DISABLE,
         .gpio_num       = e_pin,
         .duty           = 0, // Set duty to 0%
@@ -81,32 +83,63 @@ void ledc_init(drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_channel_t e_channel, flo
     ESP_ERROR_CHECK(ledc_channel_config(&ledc_channel));
 }
 
-void drv_pwm_led_init_timer(uint32_t frequency_hz)
+drv_pwm_led_e_timer_t drv_pwm_led_free_timer_get(void)
+{
+    for (int index = 0; index < LEDC_TIMER_MAX; index++)
+    {
+        if (timer_is_busy[index] == false)
+        {
+            return (drv_pwm_led_e_timer_t)index;
+        }
+    }
+    return (drv_pwm_led_e_timer_t)LEDC_TIMER_MAX;
+}
+
+drv_pwm_led_e_channel_t drv_pwm_led_free_channel_get(void)
+{
+    for (int index = 0; index < LEDC_CHANNEL_MAX; index++)
+    {
+        if (channel_is_busy[index] == false)
+        {
+            return (drv_pwm_led_e_channel_t)index;
+        }
+    }
+    return (drv_pwm_led_e_channel_t)LEDC_CHANNEL_MAX;
+}
+
+void drv_pwm_led_init_timer(drv_pwm_led_e_timer_t e_timer, uint32_t frequency_hz)
 {
 
     // Prepare and then apply the LEDC PWM timer configuration
     ledc_timer_config_t ledc_timer = {
         .speed_mode       = LEDC_MODE,
-        .timer_num        = LEDC_TIMER,
+        .timer_num        = e_timer,
         .duty_resolution  = LEDC_DUTY_RES,
         .freq_hz          = frequency_hz,  // Set output frequency
         .clk_cfg          = LEDC_AUTO_CLK
     };
     ESP_ERROR_CHECK(ledc_timer_config(&ledc_timer));
-
-
+    timer_is_busy[e_timer] = true;
 }
 
-void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, float duty_percent, float set_high_point_percent)
+void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_timer_t e_timer, float duty_percent, float set_high_point_percent)
 {
     duty_timer_value = duty_percent * pow(2, LEDC_DUTY_RES) / 100;
 
     // Set the LEDC peripheral configuration
-    ledc_init(e_pin, e_channel, set_high_point_percent);
+    ledc_init(e_pin, e_channel, e_timer, set_high_point_percent);
     // Set duty to 50%
     //ESP_ERROR_CHECK(ledc_set_duty_with_hpoint(LEDC_MODE, e_channel, LEDC_DUTY, (int)(set_high_point_percent * pow(2, LEDC_DUTY_RES) / 100)));
     //ESP_LOGW(TAG, "PWM_LED_%d Set High point : %d", e_pin, (int)(set_high_point_percent * pow(2, LEDC_DUTY_RES) / 100));
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, e_channel, duty_timer_value));
     // Update duty to apply the new value
+    ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, e_channel));
+    channel_is_busy[e_channel] = true;
+}
+
+void drv_pwm_led_set_duty(drv_pwm_led_e_channel_t e_channel, float duty_percent)
+{
+    duty_timer_value = duty_percent * pow(2, LEDC_DUTY_RES) / 100;
+    ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, e_channel, duty_timer_value));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, e_channel));
 }

@@ -47,6 +47,7 @@ typedef enum
     DRV_PWM_LED_CHANNEL_6,
     DRV_PWM_LED_CHANNEL_7,
     DRV_PWM_LED_CHANNEL_8,
+    DRV_PWM_LED_CHANNEL_MAX,
 }drv_pwm_led_e_channel_t;
 
 typedef enum
@@ -61,6 +62,18 @@ typedef enum
     DRV_PWM_LED_7 = CONFIG_DRV_PWM_LED_PIN_7,
     DRV_PWM_LED_8 = CONFIG_DRV_PWM_LED_PIN_8,
 }drv_pwm_led_e_pin_t;
+
+typedef enum
+{
+    DRV_PWM_LED_TIMER_0,
+    DRV_PWM_LED_TIMER_1,
+    DRV_PWM_LED_TIMER_2,
+    DRV_PWM_LED_TIMER_3,
+    DRV_PWM_LED_TIMER_MAX,
+}drv_pwm_led_e_timer_t;
+
+
+
 
 /* *****************************************************************************
  * Type Definitions
@@ -77,8 +90,11 @@ typedef enum
 /* *****************************************************************************
  * Function Prototypes
  **************************************************************************** */
-void drv_pwm_led_init_timer(uint32_t frequency_hz);
-void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, float duty_percent, float set_high_point_percent);
+drv_pwm_led_e_timer_t drv_pwm_led_free_timer_get(void);
+drv_pwm_led_e_channel_t drv_pwm_led_free_channel_get(void);
+void drv_pwm_led_init_timer(drv_pwm_led_e_timer_t e_timer, uint32_t frequency_hz);
+void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_timer_t e_timer, float duty_percent, float set_high_point_percent);
+void drv_pwm_led_set_duty(drv_pwm_led_e_channel_t e_channel, float duty_percent);
 
 
 
