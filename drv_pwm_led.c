@@ -19,6 +19,8 @@
 #include "driver/ledc.h"
 #include "esp_err.h"
 #include "esp_log.h"
+#include "esp_intr_alloc.h"
+#include "soc/ledc_periph.h"
 
 /* *****************************************************************************
  * Configuration Definitions
@@ -55,6 +57,7 @@ int duty_timer_value;
 int set_high_point_timer_value;
 bool timer_is_busy[LEDC_TIMER_MAX] = {0};
 bool channel_is_busy[LEDC_CHANNEL_MAX] = {0};
+intr_handle_t isr_handle = NULL;
 
 /* *****************************************************************************
  * Prototype of functions definitions
@@ -107,6 +110,7 @@ drv_pwm_led_e_channel_t drv_pwm_led_free_channel_get(void)
     return (drv_pwm_led_e_channel_t)LEDC_CHANNEL_MAX;
 }
 
+
 void drv_pwm_led_init_timer(drv_pwm_led_e_timer_t e_timer, uint32_t frequency_hz)
 {
 
@@ -143,3 +147,28 @@ void drv_pwm_led_set_duty(drv_pwm_led_e_channel_t e_channel, float duty_percent)
     ESP_ERROR_CHECK(ledc_set_duty(LEDC_MODE, e_channel, duty_timer_value));
     ESP_ERROR_CHECK(ledc_update_duty(LEDC_MODE, e_channel));
 }
+
+
+
+void drv_pwm_led_configure_ledc_isr(void (*isr_handler)(void *), void *arg) 
+{
+    esp_err_t err = esp_intr_alloc(ETS_LEDC_INTR_SOURCE, ESP_INTR_FLAG_IRAM, isr_handler, arg, &isr_handle);
+    if (err != ESP_OK) 
+    {
+        ESP_LOGE(TAG, "LEDC ISR Register Failure: %s", esp_err_to_name(err));
+    }
+    else
+    {
+        ESP_LOGD(TAG, "LEDC ISR Register Success: %s", esp_err_to_name(err));
+        err = esp_intr_enable(isr_handle);
+        if (err != ESP_OK) 
+        {
+            ESP_LOGE(TAG, "esp_intr_enable Failure: %s", esp_err_to_name(err));
+        }
+        else
+        {
+            ESP_LOGD(TAG, "esp_intr_enable Success: %s", esp_err_to_name(err));
+        }
+    }
+}
+

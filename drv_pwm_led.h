@@ -95,6 +95,7 @@ drv_pwm_led_e_channel_t drv_pwm_led_free_channel_get(void);
 void drv_pwm_led_init_timer(drv_pwm_led_e_timer_t e_timer, uint32_t frequency_hz);
 void drv_pwm_led_init(drv_pwm_led_e_channel_t e_channel, drv_pwm_led_e_pin_t e_pin, drv_pwm_led_e_timer_t e_timer, float duty_percent, float set_high_point_percent);
 void drv_pwm_led_set_duty(drv_pwm_led_e_channel_t e_channel, float duty_percent);
+void drv_pwm_led_configure_ledc_isr(void (*isr_handler)(void *), void *arg);
 
 
 
