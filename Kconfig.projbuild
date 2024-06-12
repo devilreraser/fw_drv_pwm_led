@@ -5,7 +5,7 @@ menu "Component drv_pwm_led Configuration"
         default y
 
     config DRV_PWM_LED_USE_DYNAMIC_INITIALIZATION
-        bool "Use DO pin -> GPIO pin table"
+        bool "Use PWM_LED pin -> GPIO pin table"
         default n
 
     config DRV_PWM_LED_GPIO_RANGE_MIN
@@ -33,47 +33,47 @@ menu "Component drv_pwm_led Configuration"
     
 
     config DRV_PWM_LED_PIN_0
-        int "GPIO pin number DO0"
+        int "GPIO pin number PWM_LED0"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
 
     config DRV_PWM_LED_PIN_1
-        int "GPIO pin number DO1"
+        int "GPIO pin number PWM_LED1"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
     
     config DRV_PWM_LED_PIN_2
-        int "GPIO pin number DO2"
+        int "GPIO pin number PWM_LED2"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
     
     config DRV_PWM_LED_PIN_3
-        int "GPIO pin number DO3"
+        int "GPIO pin number PWM_LED3"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
     
     config DRV_PWM_LED_PIN_4
-        int "GPIO pin number DO4"
+        int "GPIO pin number PWM_LED4"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
     
     config DRV_PWM_LED_PIN_5
-        int "GPIO pin number DO5"
+        int "GPIO pin number PWM_LED5"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
     
     config DRV_PWM_LED_PIN_6
-        int "GPIO pin number DO6"
+        int "GPIO pin number PWM_LED6"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
                             
     config DRV_PWM_LED_PIN_7
-        int "GPIO pin number DO7"
+        int "GPIO pin number PWM_LED7"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
                                 
     config DRV_PWM_LED_PIN_8
-        int "GPIO pin number DO8"
+        int "GPIO pin number PWM_LED8"
         range DRV_PWM_LED_GPIO_RANGE_NONE DRV_PWM_LED_GPIO_OUT_RANGE_MAX
         default DRV_PWM_LED_GPIO_RANGE_NONE
                             
